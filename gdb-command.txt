@@ -1,7 +1,0 @@
-set pagination off
-set logging file gdb-output.txt
-set logging on
-source libpython.py
-info threads
-thread apply all py-bt
-quit
