@@ -1,0 +1,48 @@
+name: CI
+
+concurrency:
+  # Concurrency is defined in a way that concurrent builds against branches do
+  # not cancel previous builds.
+  # However, for every new build against the same pull request source branch,
+  # all older builds against that same branch get canceled.
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.repository }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  workflow_call:
+    inputs:
+      kind:
+        required: false
+        type: string
+        default: dev
+      package_command:
+        required: false
+        type: string
+        description: Command used to build python package
+        default: >-
+          python -m
+          build
+          -C--global-option=egg_info
+          -C--global-option=--tag-build=+dev$(git rev-parse --short HEAD)
+          --wheel
+          --outdir dist/
+    secrets:
+      PYPI_API_TOKEN:
+        required: false
+
+jobs:
+
+  pre-commit:
+    name: Pre-Commit
+    uses: ./.github/workflows/pre-commit-action.yml
+
+  build-python-package:
+    name: Python Package
+    uses: ./.github/workflows/package-action.yml
+    if: always()
+    needs:
+      - pre-commit
+    with:
+      kind: "${{ inputs.kind }}"
+      cmd: "${{ inputs.package_command }}"
+
