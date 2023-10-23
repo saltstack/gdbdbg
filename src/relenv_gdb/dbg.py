@@ -1,12 +1,14 @@
+# Copyright 2023 VMware, Inc.
+# SPDX-License-Identifier: Apache-2.0
 """
 Use gdb to pull python stack traces for every thread in a parent process and all of it's children.
 """
 import os
-import sys
-import subprocess
-import pprint
-import tempfile
 import pathlib
+import pprint
+import subprocess
+import sys
+import tempfile
 
 import psutil
 
@@ -31,11 +33,15 @@ set logging enabled off
 quit
 """
 
+
 def find_dist_info():
+    """Find relenv_gdb's dist-info directory."""
     for name in pathlib.Path(__file__).parent.parent.rglob("relenv_gdb*dist-info"):
         return name
 
+
 def find_relenv_gdb():
+    """Find the relenv-gdb script location."""
     dist_info = find_dist_info()
     text = pathlib.Path(dist_info, "RECORD").read_text()
     for line in text.split("\n"):
@@ -45,12 +51,19 @@ def find_relenv_gdb():
             if script.exists():
                 return script
 
+
 def append_line(path, line):
+    """
+    Append a line to the path.
+    """
     with open(path, "a") as fp:
         fp.write(line + "\n")
 
 
 def debug(gdb, proc, output):
+    """
+    Run debug.
+    """
     print(f"Debugging {proc.pid} {' '.join(proc.cmdline())}")
     fd, path = tempfile.mkstemp()
     with open(path, "w") as fp:
@@ -70,6 +83,9 @@ def debug(gdb, proc, output):
 
 
 def main():
+    """
+    The debug programs entrypoint.
+    """
     try:
         pid = int(sys.argv[1])
     except (IndexError, ValueError):
