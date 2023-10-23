@@ -18,7 +18,7 @@ repos:
       - id: check-copyright-headers
         name: Check python modules for appropriate copyright headers
         files: ^.*\.py$
-        exclude: setup\.py
+        exclude: (setup\.py|libpython\.py)
         entry: python .pre-commit-hooks/copyright_headers.py
         language: system
   # <---- Local Hooks ------------------------------------------------------------------------------------------------

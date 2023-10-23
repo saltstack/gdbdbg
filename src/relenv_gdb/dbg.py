@@ -1,13 +1,15 @@
+# Copyright 2023 VMware, Inc.
+# SPDX-License-Identifier: Apache-2.0
 """
 Use gdb to pull python stack traces for every thread in a parent process and all of it's children.
 """
 import os
-import sys
-import psutil
-import subprocess
 import pprint
+import subprocess
+import sys
 import tempfile
 
+import psutil
 
 CMD_TPL = """
 set pagination off
@@ -32,11 +34,17 @@ quit
 
 
 def append_line(path, line):
+    """
+    Append a line of text to the file.
+    """
     with open(path, "a") as fp:
         fp.write(line + "\n")
 
 
 def debug(proc, output):
+    """
+    Debug a process.
+    """
     print(f"Debugging {proc.pid} {' '.join(proc.cmdline())}")
     fd, path = tempfile.mkstemp()
     with open(path, "w") as fp:
@@ -50,6 +58,9 @@ def debug(proc, output):
 
 
 def main():
+    """
+    The dbg program entry point.
+    """
     try:
         pid = int(sys.argv[1])
     except (IndexError, ValueError):

@@ -1,5 +1,7 @@
+# Copyright 2023 VMware, Inc.
+# SPDX-License-Identifier: Apache-2.0
 """
-Inject python code into a running process
+Inject python code into a running process.
 
 Usage:
   python3 ./inject.py <pid> mycode.py
@@ -12,17 +14,11 @@ should already be in the path:
 
 """
 import os
-import sys
-import psutil
 import subprocess
-import pprint
+import sys
 import tempfile
 
-
-def append_line(path, line):
-    with open(path, "a") as fp:
-        fp.write(line + "\n")
-
+import psutil
 
 INJ_TPL = """
 set pagination off
@@ -44,13 +40,17 @@ with open("{}", "r") as fp:
     gdb.set_convenience_variable("SCRIPT", fp.read())
 """
 
-def main2():
+
+def main():
+    """
+    The inject program entrypoint.
+    """
     try:
         pid = int(sys.argv[1])
     except (IndexError, ValueError):
         pid = -1
     try:
-        parent = psutil.Process(pid)
+        psutil.Process(pid)
     except (ValueError, psutil.NoSuchProcess):
         print("Please provide a valid pid as the first argument")
         sys.exit(1)
@@ -75,5 +75,6 @@ def main2():
         os.close(s_fd)
         os.remove(s_path)
 
+
 if __name__ == "__main__":
-    main2()
+    main()
