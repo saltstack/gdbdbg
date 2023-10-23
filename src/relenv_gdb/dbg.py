@@ -104,7 +104,7 @@ def main():
     debug(gdb, parent, output)
 
     for child in parent.children():
-        debug(child, output)
+        debug(gdb, child, output)
 
 
 if __name__ == "__main__":
