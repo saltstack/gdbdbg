@@ -25,10 +25,11 @@ on:
 jobs:
   build:
     name: Build Python Wheel
-    matrix:
-        host:
-          - x86_64
-          - aarch64
+    strategy:
+      matrix:
+          host:
+            - x86_64
+            - aarch64
     runs-on:
       - self-hosted
       - linux
