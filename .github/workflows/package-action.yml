@@ -89,8 +89,8 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: dist
-          path: dist/*
+          name: ${{ matrix.host }} Wheel
+          path: dist/*.whl
           retention-days: 5
       - name: Read Version
         run: >-
