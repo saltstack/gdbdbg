@@ -98,6 +98,10 @@ def build_gdb(prefix):
 
 def build_wheel(wheel_directory, metadata_directory=None, config_settings=None):
     """PEP 517 wheel creation hook."""
+    relenv.fetch(
+        relenv.common.__version__,
+        relenv.common.get_triplet(relenv.common.build_arch()),
+    )
     static_build_dir = os.environ.get("PY_STATIC_BUILD_DIR", "")
     if static_build_dir:
         relenvdir = (pathlib.Path(static_build_dir) / "gdb").resolve()
