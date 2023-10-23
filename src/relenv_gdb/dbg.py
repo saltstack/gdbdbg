@@ -1,7 +1,7 @@
 # Copyright 2023 VMware, Inc.
 # SPDX-License-Identifier: Apache-2.0
 """
-Use gdb to pull python stack traces for every thread in a parent process and all of it's children.
+Use gdb to pull python stack traces a parent process and all of it's children.
 """
 import os
 import pathlib
