@@ -3,6 +3,7 @@
 """
 Use gdb to pull python stack traces a parent process and all of it's children.
 """
+import argparse
 import os
 import pathlib
 import pprint
@@ -86,14 +87,17 @@ def main():
     """
     The debug programs entrypoint.
     """
+    parser = argparse.ArgumentParser(
+        prog="relenv-dbg",
+        description="Use gdb to debug python programs running in a relenv",
+        epilog="",
+    )
+    parser.add_argument("pid", type=int)
+    args = parser.parse_args()
     try:
-        pid = int(sys.argv[1])
-    except (IndexError, ValueError):
-        pid = -1
-    try:
-        parent = psutil.Process(pid)
+        parent = psutil.Process(args.pid)
     except (ValueError, psutil.NoSuchProcess):
-        print("Please provide a valid pid as the only argument")
+        print("Please provide a valid pid")
         sys.exit(1)
 
     gdb = find_relenv_gdb()
