@@ -47,6 +47,26 @@ jobs:
         pkginfo
         --user
 
+    - name: Install relenv
+      run: >-
+        python -m
+        pip install
+        relenv
+        --user
+
+    - name: Install relenv toolchain
+      run: >-
+        python -m
+        relenv
+        toolchain
+        fetch
+
+    - name: Install relenv fetch
+      run: >-
+        python -m
+        relenv
+        fetch
+
     - name: Echo Build Wheel Command
       run: echo "${{ inputs.cmd }}"
 
