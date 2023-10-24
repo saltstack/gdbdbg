@@ -15,8 +15,6 @@ import psutil
 
 CMD_TPL = """
 set pagination off
-set logging file {output}
-set logging enabled on
 source {libpython}
 echo --- thread info for pid {pid} ---\\n
 
@@ -57,8 +55,12 @@ def append_line(path, line):
     """
     Append a line to the path.
     """
-    with open(path, "a") as fp:
-        fp.write(line + "\n")
+    if isinstance(path, (str, pathlib.Path)):
+        with open(path, "a") as fp:
+            fp.write(line + "\n")
+    else:
+        path.write(line + "\n")
+        path.flush()
 
 
 def debug(gdb, proc, output):
@@ -70,14 +72,19 @@ def debug(gdb, proc, output):
     with open(path, "w") as fp:
         fp.write(
             CMD_TPL.format(
-                output=output,
                 pid=proc.pid,
                 libpython=(pathlib.Path(__file__).parent / "libpython.py").resolve(),
             )
         )
     append_line(output, f"===[ begin {proc.pid} ]===")
     append_line(output, pprint.pformat(proc.as_dict()))
-    subprocess.run([gdb, "-p", f"{proc.pid}", "--command", path], capture_output=True)
+    if output == sys.stdout:
+        capture_output = False
+    else:
+        capture_output = True
+    subprocess.run(
+        [gdb, "-p", f"{proc.pid}", "--command", path], capture_output=capture_output
+    )
     append_line(output, f"===[ end {proc.pid} ]===")
     os.close(fd)
     os.remove(path)
@@ -93,6 +100,9 @@ def main():
         epilog="",
     )
     parser.add_argument("pid", type=int)
+    parser.add_argument(
+        "--output", "-o", type=argparse.FileType("w"), default=sys.stdout
+    )
     args = parser.parse_args()
     try:
         parent = psutil.Process(args.pid)
@@ -103,12 +113,11 @@ def main():
     gdb = find_relenv_gdb()
     if not gdb:
         print("Unable to find relenv-gdb script")
-    output = "gdb-output.txt"
 
-    debug(gdb, parent, output)
+    debug(gdb, parent, args.output)
 
     for child in parent.children():
-        debug(gdb, child, output)
+        debug(gdb, child, args.output)
 
 
 if __name__ == "__main__":
