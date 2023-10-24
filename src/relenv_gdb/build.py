@@ -84,6 +84,7 @@ def build_gdb(prefix):
                 f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
                 f"--with-python={os.environ['RELENV_PATH']}/bin/python3",
                 "--with-lzma",
+                "--without-nss",
             ]
         )
         subprocess.run(["make"])
