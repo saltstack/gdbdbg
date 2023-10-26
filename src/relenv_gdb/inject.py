@@ -14,22 +14,25 @@ should already be in the path:
 
 """
 import os
+import pathlib
 import subprocess
 import sys
 import tempfile
 
 import psutil
 
+from .util import find_relenv_gdb
+
 INJ_TPL = """
 set pagination off
-source libpython.py
-source {}
+source {libpython}
+source {s_path}
 echo acquire gill\\n
-call PyGILState_Ensure()
+call (char *) PyGILState_Ensure()
 p $SCRIPT
-call PyRun_SimpleString($SCRIPT)
+call (void) PyRun_SimpleString($SCRIPT)
 echo release gill\\n
-call PyGILState_Release($1)
+call (void) PyGILState_Release($1)
 quit
 """
 
@@ -67,8 +70,18 @@ def main():
     fd, path = tempfile.mkstemp()
     try:
         with open(path, "w") as fp:
-            fp.write(INJ_TPL.format(s_path))
-        subprocess.run(["gdb", "-p", f"{pid}", "--command", path], capture_output=False)
+            fp.write(
+                INJ_TPL.format(
+                    s_path=s_path,
+                    libpython=(
+                        pathlib.Path(__file__).parent / "libpython.py"
+                    ).resolve(),
+                )
+            )
+        subprocess.run(
+            [str(find_relenv_gdb()), "-p", f"{pid}", "--command", path],
+            capture_output=False,
+        )
     finally:
         os.close(fd)
         os.remove(path)

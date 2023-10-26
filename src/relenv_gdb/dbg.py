@@ -13,6 +13,8 @@ import tempfile
 
 import psutil
 
+from .util import append_line, find_relenv_gdb
+
 CMD_TPL = """
 set pagination off
 source {libpython}
@@ -31,36 +33,6 @@ echo --- end - python tracebacks for pid {pid} ---\\n
 set logging enabled off
 quit
 """
-
-
-def find_dist_info():
-    """Find relenv_gdb's dist-info directory."""
-    for name in pathlib.Path(__file__).parent.parent.rglob("relenv_gdb*dist-info"):
-        return name
-
-
-def find_relenv_gdb():
-    """Find the relenv-gdb script location."""
-    dist_info = find_dist_info()
-    text = pathlib.Path(dist_info, "RECORD").read_text()
-    for line in text.split("\n"):
-        if "bin/relenv-gdb" in line:
-            location, digest, size = line.rsplit(",", 2)
-            script = (pathlib.Path(dist_info).parent / location).resolve()
-            if script.exists():
-                return script
-
-
-def append_line(path, line):
-    """
-    Append a line to the path.
-    """
-    if isinstance(path, (str, pathlib.Path)):
-        with open(path, "a") as fp:
-            fp.write(line + "\n")
-    else:
-        path.write(line + "\n")
-        path.flush()
 
 
 def debug(gdb, proc, output):

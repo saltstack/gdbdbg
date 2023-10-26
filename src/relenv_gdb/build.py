@@ -77,6 +77,7 @@ def build_gdb(prefix):
     relenv.common.extract_archive(str(src), archive_name)
     dir_name = archive_name.split(".tar")[0]
     # os.environ["LDFLAGS"] = f"{os.environ['LDFLAGS']} '-Wl,-rpath=$$ORIGIN/../lib'"
+    # os.environ["LDFLAGS"] += f" -Wl,-rpath={os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib"
     with pushd(src / dir_name):
         subprocess.run(
             [
@@ -88,9 +89,23 @@ def build_gdb(prefix):
             ]
         )
         subprocess.run(["make"])
-        subprocess.run(["patchelf", "--add-rpath", "$ORIGIN/../lib", "gdb/gdb"])
+        # subprocess.run(["patchelf", "--add-rpath", "$ORIGIN/../lib", "gdb/gdb"])
+        subprocess.run(
+            [
+                "patchelf",
+                "--add-rpath",
+                f"{os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
+                "gdb/gdb",
+            ]
+        )
         subprocess.run(["make", "install"])
-    relenv.relocate.main(os.environ["RELENV_PATH"])
+
+    # relenv.relocate.main(os.environ["RELENV_PATH"])
+    relenv.relocate.main(
+        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
+        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb/lib",
+        False,
+    )
     shutil.copytree(
         f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
         "src/relenv_gdb/gdb",
