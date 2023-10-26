@@ -98,6 +98,14 @@ def build_gdb(prefix):
                 "gdb/gdb",
             ]
         )
+        subprocess.run(
+            [
+                "patchelf",
+                "--add-rpath",
+                f"{os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
+                "gdbserver/gdbserver",
+            ]
+        )
         subprocess.run(["make", "install"])
 
     # relenv.relocate.main(os.environ["RELENV_PATH"])
