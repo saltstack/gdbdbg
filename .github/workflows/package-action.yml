@@ -96,7 +96,7 @@ jobs:
 
       - name: Read Version
         run: >-
-          python3b
+          python3
           -c
           "from pkginfo import Wheel; s = Wheel('dist/$(ls dist/)'); print(f'version={s.version}')"
           >>
