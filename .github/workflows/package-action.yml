@@ -52,6 +52,7 @@ jobs:
           pip install
           build
           --user
+
       - name: Install pypa/pkginffo
         run: >-
           python -m
@@ -89,12 +90,13 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: ${{ matrix.host }} Wheel
+          name: relenv-gdb-debug-${{ matrix.host }}-wheel
           path: dist/*.whl
           retention-days: 5
+
       - name: Read Version
         run: >-
-          python3
+          python3b
           -c
           "from pkginfo import Wheel; s = Wheel('dist/$(ls dist/)'); print(f'version={s.version}')"
           >>
