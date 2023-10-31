@@ -75,8 +75,6 @@ def build_gdb(prefix):
     archive_name = str(src / pathlib.Path(url).name)
     relenv.common.extract_archive(str(src), archive_name)
     dir_name = archive_name.split(".tar")[0]
-    # os.environ["LDFLAGS"] = f"{os.environ['LDFLAGS']} '-Wl,-rpath=$$ORIGIN/../lib'"
-    # os.environ["LDFLAGS"] += f" -Wl,-rpath={os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib"
     with pushd(src / dir_name):
         subprocess.run(
             [
@@ -87,11 +85,7 @@ def build_gdb(prefix):
                 "--with-separate-debug-dir=/usr/lib/debug",
             ]
         )
-        #    os.environ[
-        #        "LDFLAGS"
-        #    ] += f" -Wl,-rpath={os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib"
         subprocess.run(["make"])
-        # subprocess.run(["patchelf", "--add-rpath", "$ORIGIN/../lib", "gdb/gdb"])
         bins = ["gdb/gdb", "gdbserver/gdbserver", "gdbserver/libinproctrace.so"]
         for _ in bins:
             subprocess.run(
@@ -104,7 +98,6 @@ def build_gdb(prefix):
             )
         subprocess.run(["make", "install"])
 
-    # relenv.relocate.main(os.environ["RELENV_PATH"])
     relenv.relocate.main(
         f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
         f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb/lib",
