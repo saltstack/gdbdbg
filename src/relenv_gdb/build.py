@@ -45,7 +45,6 @@ def build_gdb(prefix):
 
     archive_name = str(src / pathlib.Path(url).name)
     relenv.common.extract_archive(str(src), archive_name)
-
     dir_name = archive_name.split(".tar")[0]
     os.environ.update(relenv.buildenv.buildenv(prefix))
     os.environ[
@@ -85,7 +84,7 @@ def build_gdb(prefix):
                 f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
                 f"--with-python={os.environ['RELENV_PATH']}/bin/python3",
                 "--with-lzma",
-                "--without-nss",
+                "--with-separate-debug-dir=/usr/lib/debug",
             ]
         )
         #    os.environ[
