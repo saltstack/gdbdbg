@@ -67,6 +67,7 @@ def build_gdb(prefix):
                 "./configure",
                 f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
             ]
+            check=True
         )
         subprocess.run(["make"], check=True)
         subprocess.run(["make", "install"], check=True)
@@ -88,8 +89,9 @@ def build_gdb(prefix):
                 "--with-lzma",
                 "--with-separate-debug-dir=/usr/lib/debug",
             ]
+            check=True
         )
-        subprocess.run(["make"])
+        subprocess.run(["make"], check=True)
         bins = ["gdb/gdb", "gdbserver/gdbserver", "gdbserver/libinproctrace.so"]
         for _ in bins:
             subprocess.run(
@@ -98,7 +100,8 @@ def build_gdb(prefix):
                     "--add-rpath",
                     f"{os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
                     _,
-                ]
+                ],
+                check=True
             )
         subprocess.run(["make", "install"])
 
@@ -115,10 +118,8 @@ def build_gdb(prefix):
 
 def build_wheel(wheel_directory, metadata_directory=None, config_settings=None):
     """PEP 517 wheel creation hook."""
-    # relenv.fetch.fetch(
-    #    relenv.common.__version__,
-    #    relenv.common.get_triplet(relenv.common.build_arch()),
-    # )
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
     static_build_dir = os.environ.get("PY_STATIC_BUILD_DIR", "")
 
     #XXX should be in relenv
