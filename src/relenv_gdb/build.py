@@ -51,6 +51,7 @@ def build_gdb(prefix):
     relenv.common.extract_archive(str(src), archive_name)
     dir_name = archive_name.split(".tar")[0]
     os.environ.update(relenv.buildenv.buildenv(prefix))
+    os.environ["RELENV_PATH"] = str(prefix)
     os.environ[
         "CFLAGS"
     ] = f"{os.environ['CFLAGS']} -I{os.environ['RELENV_PATH']}/include/ncursesw"
@@ -67,8 +68,8 @@ def build_gdb(prefix):
                 f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
             ]
         )
-        subprocess.run(["make"])
-        subprocess.run(["make", "install"])
+        subprocess.run(["make"], check=True)
+        subprocess.run(["make", "install"], check=True)
 
     url = "https://ftp.gnu.org/gnu/gdb/gdb-13.2.tar.xz"
     relenv.common.download_url(
