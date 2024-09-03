@@ -9,6 +9,7 @@ import os
 import pathlib
 import shutil
 import subprocess
+import sys
 import tempfile
 
 import relenv.buildenv
@@ -55,7 +56,11 @@ def build_gdb(prefix):
     ] = f"{os.environ['CPPFLAGS']} -I{os.environ['RELENV_PATH']}/include/ncursesw"
     import pprint
 
+    print("*" * 80)
+    print("** Environment")
     pprint.pprint(dict(os.environ))
+    print("*" * 80)
+    sys.stdout.flush()
 
     with pushd(src / dir_name):
         subprocess.run(
