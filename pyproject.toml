@@ -12,3 +12,8 @@ skip = "src/relenv_gdb/libpython.py"
 
 [tool.black]
 force_exclude = "libpython.py"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
