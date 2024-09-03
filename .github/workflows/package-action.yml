@@ -25,7 +25,18 @@ on:
 jobs:
   build:
     name: Build Python Wheel
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        host:
+          - x86_64
+          - aarch64
+
+    runs-on:
+      - self-hosted
+      - linux
+      - src-build
+      - ${{ matrix.host }}
+
     container:
       image: debian:11
     outputs:
