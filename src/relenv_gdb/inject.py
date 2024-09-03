@@ -26,21 +26,14 @@ from .util import find_relenv_gdb
 INJ_TPL = """
 set pagination off
 source {libpython}
-source {s_path}
 echo acquire gill\\n
 call (char *) PyGILState_Ensure()
-p $SCRIPT
-call (void) PyRun_SimpleString($SCRIPT)
+call (PyObject *) Py_BuildValue("s", "{inject_path}")
+call (FILE *) _Py_fopen_obj($2, "r+")
+call (void) PyRun_SimpleFile($3, "{inject_path}")
 echo release gill\\n
 call (void) PyGILState_Release($1)
 quit
-"""
-
-
-SCRIPT = """#!/usr/bin/python
-import gdb
-with open("{}", "r") as fp:
-    gdb.set_convenience_variable("SCRIPT", fp.read())
 """
 
 
@@ -63,30 +56,30 @@ def main():
     except IndexError:
         print("Please provide an input file as the second argument")
 
-    s_fd, s_path = tempfile.mkstemp(suffix=".py")
-    with open(s_path, "w") as fp:
-        fp.write(SCRIPT.format(file))
-
-    fd, path = tempfile.mkstemp()
+    s_fd, inject_path = tempfile.mkstemp(suffix=".py")
+    with open(file, "r") as fp:
+        with open(inject_path, "w") as fp2:
+            fp2.write(fp.read())
+    fd, gdb_command = tempfile.mkstemp()
     try:
-        with open(path, "w") as fp:
+        with open(gdb_command, "w") as fp:
             fp.write(
                 INJ_TPL.format(
-                    s_path=s_path,
+                    inject_path=inject_path,
                     libpython=(
                         pathlib.Path(__file__).parent / "libpython.py"
                     ).resolve(),
                 )
             )
         subprocess.run(
-            [str(find_relenv_gdb()), "-p", f"{pid}", "--command", path],
+            [str(find_relenv_gdb()), "-p", f"{pid}", "--command", gdb_command],
             capture_output=False,
         )
     finally:
         os.close(fd)
-        os.remove(path)
+        os.remove(gdb_command)
         os.close(s_fd)
-        os.remove(s_path)
+        os.remove(inject_path)
 
 
 if __name__ == "__main__":
