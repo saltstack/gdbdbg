@@ -10,10 +10,14 @@ import pathlib
 import shutil
 import subprocess
 import tempfile
+import pprint
 
 import relenv.buildenv
 import relenv.common
 import relenv.create
+import relenv.build
+import relenv.fetch
+import relenv.toolchain
 from setuptools.build_meta import *
 
 _build_wheel = build_wheel
@@ -53,9 +57,8 @@ def build_gdb(prefix):
     os.environ[
         "CPPFLAGS"
     ] = f"{os.environ['CPPFLAGS']} -I{os.environ['RELENV_PATH']}/include/ncursesw"
-    import pprint
 
-    pprint.pprint(dict(os.environ))
+    print(f"Build environment: {pprint.pformat(dict(os.environ))}")
 
     with pushd(src / dir_name):
         subprocess.run(
@@ -116,8 +119,24 @@ def build_wheel(wheel_directory, metadata_directory=None, config_settings=None):
     #    relenv.common.get_triplet(relenv.common.build_arch()),
     # )
     static_build_dir = os.environ.get("PY_STATIC_BUILD_DIR", "")
+
+    #XXX should be in relenv
+    dirs = relenv.common.work_dirs()
+    if not dirs.toolchain.exists():
+        os.makedirs(dirs.toolchain)
+    if not dirs.build.exists():
+        os.makedirs(dirs.build)
+
+    arch = relenv.common.build_arch()
+    triplet = relenv.common.get_triplet(machine=arch)
+    python = relenv.build.platform_versions()[0]
+
     if static_build_dir:
         relenvdir = (pathlib.Path(static_build_dir) / "gdb").resolve()
+        relenv.toolchain.fetch(
+            arch, dirs.toolchain
+        )
+        relenv.fetch.fetch(relenv.common.__version__, triplet, python)
         relenv.create.create(str(relenvdir))
         build_gdb(relenvdir)
         try:
@@ -127,6 +146,10 @@ def build_wheel(wheel_directory, metadata_directory=None, config_settings=None):
     else:
         with tempfile.TemporaryDirectory() as tmp_dist_dir:
             relenvdir = pathlib.Path(tmp_dist_dir) / "gdb"
+            relenv.toolchain.fetch(
+                arch, dirs.toolchain
+            )
+            relenv.fetch.fetch(relenv.common.__version__, triplet, python)
             relenv.create.create(str(relenvdir))
             build_gdb(relenvdir)
             try:

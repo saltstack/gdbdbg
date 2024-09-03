@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       changed-files:
-        required: false
+        required: true
         type: string
         description: JSON string containing information about changed files
 
@@ -30,5 +30,11 @@ jobs:
           pre-commit install --install-hooks
 
       - name: Check ALL Files On Branch
+        if: github.event_name != 'pull_request'
         run: |
           pre-commit run --show-diff-on-failure --color=always --all-files
+
+      - name: Check Changed Files On PR
+        if: github.event_name == 'pull_request' && fromJSON(inputs.changed-files)['repo'] == 'true'
+        run: |
+          pre-commit run --show-diff-on-failure --color=always --files ${{ join(fromJSON(inputs.changed-files)['repo_files'], ' ') }}
