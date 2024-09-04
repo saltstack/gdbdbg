@@ -6,6 +6,7 @@ Utility methods.
 import pathlib
 
 
+
 def find_dist_info():
     """Find relenv_gdb's dist-info directory."""
     for name in pathlib.Path(__file__).parent.parent.rglob("relenv_gdb*dist-info"):
