@@ -129,8 +129,7 @@ def build_gdb(prefix):
             subprocess.run(
                 [
                     "patchelf",
-                    "--add-rpath",
-                    f"{os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
+                    f"--add-rpath={os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
                     _,
                 ],
                 check=True,
