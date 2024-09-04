@@ -101,6 +101,18 @@ def build_gdb(prefix):
         subprocess.run(["make"], check=True)
         subprocess.run(["make", "install"], check=True)
 
+    # Newer patchelf for now
+    arch = relenv.common.build_arch()
+    url = f"https://github.com/NixOS/patchelf/releases/download/0.18.0/patchelf-0.18.0-{arch}.tar.gz"
+    relenv.common.download_url(
+        url,
+        src,
+    )
+    archive_name = str(src / pathlib.Path(url).name)
+    relenv.common.extract_archive(str(src), archive_name)
+    dir_name = archive_name.split(".tar")[0]
+    patchelf = (src / "bin" / "patchelf").resolve()
+
     os.environ["LDFLAGS"] = f"{os.environ['LDFLAGS']} -lreadline"
     url = "https://ftp.gnu.org/gnu/gdb/gdb-15.1.tar.xz"
     relenv.common.download_url(
@@ -128,8 +140,9 @@ def build_gdb(prefix):
                 print(f"File not found {_}")
             subprocess.run(
                 [
-                    "patchelf",
-                    f"--add-rpath={os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
+                    str(patchelf),
+                    "--add-rpath",
+                    f"{os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
                     _,
                 ],
                 check=True,
