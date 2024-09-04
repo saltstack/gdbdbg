@@ -2,6 +2,11 @@
 #
 # Build a ppt wheel in a docker container.
 #
+# This script is meant to build a wheel in the same docker container images as
+# we do in CI/CD. Run it from the root of the github repository.
+#
+#  `scripts/dockerbuild.sh1
+#
 if [ -n "$UID" ]
 then
   CHOWN=""

@@ -124,6 +124,8 @@ def build_gdb(prefix):
         subprocess.run(["make"], check=True)
         bins = ["gdb/gdb", "gdbserver/gdbserver", "gdbserver/libinproctrace.so"]
         for _ in bins:
+            if not pathlib.Path(_).resolve().exists():
+                print(f"File not found {_}")
             subprocess.run(
                 [
                     "patchelf",
@@ -131,7 +133,7 @@ def build_gdb(prefix):
                     f"{os.environ['TOOLCHAIN_PATH']}/{os.environ['TRIPLET']}/sysroot/lib",
                     _,
                 ],
-                # check=True,
+                check=True,
             )
         subprocess.run(["make", "install"])
 
