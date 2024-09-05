@@ -67,7 +67,6 @@ jobs:
   build-python-package:
     name: Python Package
     uses: ./.github/workflows/package-action.yml
-    if: always()
     needs:
       - pre-commit
     with:
