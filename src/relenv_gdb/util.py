@@ -1,10 +1,9 @@
-# Copyright 2023 VMware, Inc.
+# Copyright 2023-2024 VMware, Inc.
 # SPDX-License-Identifier: Apache-2.0
 """
 Utility methods.
 """
 import pathlib
-
 
 
 def find_dist_info():
