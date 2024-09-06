@@ -5,10 +5,10 @@ requires = [
     "relenv",
 ]
 build-backend = "build"
-backend-path = ["src/relenv_gdb"]
+backend-path = ["src/gdbdbg"]
 
 [tool.isort]
-skip = "src/relenv_gdb/libpython.py"
+skip = "libpython.py"
 
 [tool.black]
 force_exclude = "libpython.py"

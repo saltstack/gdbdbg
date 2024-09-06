@@ -19,9 +19,7 @@ def main():
         with open(real_gdb_bin, "rb") as fp:
             sys.stdout.flush()
             sys.stderr.flush()
-            args = [sys.argv[0], f"--data-directory={data_directory}"] + sys.argv[
-                1:
-            ]
+            args = [sys.argv[0], f"--data-directory={data_directory}"] + sys.argv[1:]
             os.execve(fp.fileno(), args, os.environ)
     else:
         cmd = real_gdb_bin
