@@ -5,12 +5,12 @@ import platform
 
 from setuptools import Distribution, setup
 
-
 GLIBC_VERSION = "2.17"
 
 
 def plat_name():
     return f"manylinux_{GLIBC_VERSION.replace('.', '_')}_{platform.machine()}"
+
 
 setup(
     options={
