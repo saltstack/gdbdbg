@@ -39,7 +39,7 @@ jobs:
           prerelease: false
 
       - name: Upload Source Tarball
-        id: upload-release-asset
+        id: upload-release-asset-source
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +48,7 @@ jobs:
           asset_path: dist/*.tar.gz
 
       - name: Upload x86-64 Wheel
-        id: upload-release-asset
+        id: upload-release-asset-x86_64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
           asset_path: dist/*x86_64.whl
 
       - name: Upload arm64 Wheel
-        id: upload-release-asset
+        id: upload-release-asset-aarch64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
