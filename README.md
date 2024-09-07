@@ -20,5 +20,5 @@ manhole.install()
 And inject it with gdbdbg-inject:
 
 ```
-gdbdbg <pid> manhole.py
+gdbdbg-inject <pid> manhole.py
 ```
