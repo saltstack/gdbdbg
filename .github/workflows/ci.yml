@@ -1,13 +1,5 @@
 name: CI
 
-concurrency:
-  # Concurrency is defined in a way that concurrent builds against branches do
-  # not cancel previous builds.
-  # However, for every new build against the same pull request source branch,
-  # all older builds against that same branch get canceled.
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.repository }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
 on:
   workflow_call:
     inputs:
@@ -64,22 +56,29 @@ jobs:
     with:
       changed-files: ${{ needs.get-changed-files.outputs.changed-files }}
 
-  build-python-package:
-    name: Python Package
-    uses: ./.github/workflows/package-action.yml
-    if: always()
-    needs:
-      - pre-commit
-    with:
-      kind: "${{ inputs.kind }}"
-      cmd: python -m build 
-      #cmd: "${{ inputs.package_command }}"
-
   test:
     name: Test
     needs:
       - get-changed-files
     uses: ./.github/workflows/test-action.yml
+    with:
+      changed-files: ${{ needs.get-changed-files.outputs.changed-files }}
+
+  build-python-package:
+    name: Python Package
+    uses: ./.github/workflows/package-action.yml
+    needs:
+      - pre-commit
+      - test
+    with:
+      kind: "${{ inputs.kind }}"
+      cmd: "${{ inputs.package_command }}"
+
+  test-python-package:
+    name: Test Python Package
+    needs:
+      - get-changed-files
+    uses: ./.github/workflows/test-package-action.yml
     with:
       changed-files: ${{ needs.get-changed-files.outputs.changed-files }}
 
@@ -90,6 +89,7 @@ jobs:
     needs:
       - pre-commit
       - test
+      - test-python-package
       - build-python-package
     secrets:
       PYPI_API_TOKEN: "${{ secrets.PYPI_API_TOKEN }}"

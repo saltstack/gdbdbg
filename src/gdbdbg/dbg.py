@@ -1,4 +1,4 @@
-# Copyright 2023 VMware, Inc.
+# Copyright 2023-2024 VMware, Inc.
 # SPDX-License-Identifier: Apache-2.0
 """
 Use gdb to pull python stack traces a parent process and all of it's children.
