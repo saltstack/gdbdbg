@@ -50,7 +50,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: dist/*.tar.gz
+          asset_path: dist/gdbdbg-${{ inputs.version }}.tar.gz
           asset_name: Source Tarball
           asset_content_type: application/tar+gzip
 
@@ -61,8 +61,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: dist/*x86_64.whl
-          asset_name: x86_64 Wheel
+          asset_path: dist/gdbdbg-${{ inputs.version }}-py3-none-manylinux_2_17_x86_64.whl
+          asset_name: gdbdbg-${{ inputs.version }}-py3-none-manylinux_2_17_x86_64.whl
           asset_content_type: application/zip
 
       - name: Upload arm64 Wheel
@@ -72,6 +72,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: dist/*aarch64.whl
-          asset_name: aarch64 Wheel
+          asset_path: dist/gdbdbg-${{ inputs.version }}-py3-none-manylinux_2_17_aarch64.whl
+          asset_name: gdbdbg-${{ inputs.version }}-py3-none-manylinux_2_17_aarch64.whl
           asset_content_type: application/zip
