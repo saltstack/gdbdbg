@@ -1,22 +1,37 @@
 name: Relenv Python Package
 
-on:
-  workflow_call:
-    secrets:
-      PYPI_API_TOKEN:
-        required: true
+on: workflow_call
 
 jobs:
   build:
     name: Publish Python Wheel
     runs-on: ubuntu-latest
     steps:
-    - name: Download Python Package Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: dist
-        path: dist
-    - name: Publish distribution to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Download Source Tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: Source Tarball
+          path: dist
+
+      - name: Download x86 Python Package Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Python Wheel x86_64
+          path: dist
+
+      - name: Download arm64 Python Package Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Python Wheel aarch64
+          path: dist
+
+      - name: List dist directory
+        run: ls -la dist/
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          print-hash: true
+          skip-existing: true
+          verify-metadata: true

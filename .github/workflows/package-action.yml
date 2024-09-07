@@ -23,6 +23,26 @@ on:
         value: "${{ jobs.build.outputs.version }}"
 
 jobs:
+  build-source:
+    name: Build Python Source Tarball
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install build
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+      - name: Build Source Tarball
+        run: |
+          python3 -m build -s
+
+      - name: Python Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Source Tarball
+          path: dist/*
+          retention-days: 5
+
   build:
     name: Build Python Wheel
     strategy:
@@ -78,11 +98,11 @@ jobs:
         ${{ inputs.cmd }}
 
     - name: Python Build Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: dist-${{ matrix.host }}
-        path: dist/*
+        name: Python Wheel ${{ matrix.host }}
+        path: dist/*.whl
         retention-days: 5
 
     - name: Read Version

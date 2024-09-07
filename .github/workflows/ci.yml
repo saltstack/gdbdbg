@@ -33,7 +33,7 @@ jobs:
     outputs:
       changed-files: ${{ toJSON(steps.changed-files.outputs) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get Changed Files
         id: changed-files
         uses: dorny/paths-filter@v2
@@ -91,11 +91,9 @@ jobs:
       - test
       - test-python-package
       - build-python-package
-    secrets:
-      PYPI_API_TOKEN: "${{ secrets.PYPI_API_TOKEN }}"
 
-  push-tag:
-    name: Push Version Tag
+  create-release:
+    name: Create Github Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -104,13 +102,18 @@ jobs:
       - build-python-package
       - deploy-python-package
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Push Tag
-        uses: rickstaa/action-create-tag@v1
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag: "v${{ needs.build-python-package.outputs.version }}"
-          message: "Version ${{ needs.build-python-package.outputs.version }}"
+          tag_name: "v${{ needs.build-python-package.outputs.version }}"
+          release_name: "Release v${{ needs.build-python-package.outputs.version }}"
+          body: |
+            Release ${{ needs.build-python-package.outputs.version }}
+          draft: false
+          prerelease: false
 
   set-pipeline-exit-status:
     # This step is just so we can make github require this step, to pass checks
@@ -122,7 +125,7 @@ jobs:
       - pre-commit
       - test
       - deploy-python-package
-      - push-tag
+      - create-release
     steps:
       - name: Get workflow information
         id: get-workflow-info
