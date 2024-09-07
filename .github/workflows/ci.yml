@@ -99,6 +99,8 @@ jobs:
     needs:
       - build-python-package
       - deploy-python-package
+    with:
+      version: ${{ needs.build-python-package.outputs.version }}
 
   set-pipeline-exit-status:
     # This step is just so we can make github require this step, to pass checks
