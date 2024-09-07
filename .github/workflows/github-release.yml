@@ -52,6 +52,7 @@ jobs:
           upload_url: ${ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: dist/*.tar.gz
           asset_name: Source Tarball
+          asset_content_type: application/tar+gzip
 
       - name: Upload x86-64 Wheel
         id: upload-release-asset-x86_64
@@ -62,6 +63,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: dist/*x86_64.whl
           asset_name: x86_64 Wheel
+          asset_content_type: application/zip
 
       - name: Upload arm64 Wheel
         id: upload-release-asset-aarch64
@@ -72,3 +74,4 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: dist/*aarch64.whl
           asset_name: aarch64 Wheel
+          asset_content_type: application/zip
