@@ -46,16 +46,16 @@ def build_gdb(prefix):
     os.environ["CFLAGS"] = (
         f"{os.environ['CFLAGS']} -I{os.environ['RELENV_PATH']}/include/ncursesw "
         f"-I{os.environ['RELENV_PATH']}/include/readline "
-        f"-I{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb/include"
+        f"-I{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb/include"
     )
     os.environ["CPPFLAGS"] = (
         f"{os.environ['CPPFLAGS']} -I{os.environ['RELENV_PATH']}/include/ncursesw "
         f"-I{os.environ['RELENV_PATH']}/include/readline "
-        f"-I{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb/include"
+        f"-I{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb/include"
     )
     os.environ["LDFLAGS"] = (
         f"{os.environ['LDFLAGS']} "
-        f"-L{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb/lib "
+        f"-L{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb/lib "
     )
 
     print(f"Build environment: {pprint.pformat(dict(os.environ))}")
@@ -74,7 +74,7 @@ def build_gdb(prefix):
         subprocess.run(
             [
                 "./configure",
-                f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
+                f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb",
             ],
             check=True,
         )
@@ -94,7 +94,7 @@ def build_gdb(prefix):
         subprocess.run(
             [
                 "./configure",
-                f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
+                f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb",
             ],
             check=True,
         )
@@ -126,7 +126,7 @@ def build_gdb(prefix):
         subprocess.run(
             [
                 "./configure",
-                f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
+                f"--prefix={os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb",
                 f"--with-python={os.environ['RELENV_PATH']}/bin/python3",
                 "--with-lzma",
                 "--with-separate-debug-dir=/usr/lib/debug",
@@ -150,13 +150,13 @@ def build_gdb(prefix):
         subprocess.run(["make", "install"])
 
     relenv.relocate.main(
-        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
-        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb/lib",
+        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb",
+        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb/lib",
         False,
     )
     shutil.copytree(
-        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/relenv_gdb/gdb",
-        "src/relenv_gdb/gdb",
+        f"{os.environ['RELENV_PATH']}/lib/python3.10/site-packages/gdbdbg/gdb",
+        "src/gdbdbg/gdb",
     )
 
 
