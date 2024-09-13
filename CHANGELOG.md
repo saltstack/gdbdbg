@@ -1,4 +1,4 @@
-0.2.0
+0.2.5
 =====
 
 This is the first public release.
