@@ -12,11 +12,14 @@ def plat_name():
     return f"manylinux_{GLIBC_VERSION.replace('.', '_')}_{platform.machine()}"
 
 
-setup(
-    options={
-        "bdist_wheel": {
-            "plat_name": f"{plat_name()}",
-            "python_tag": "py3",
-        }
+options = {
+    "bdist_wheel": {
+        "python_tag": "py3",
     }
-)
+}
+
+if platform.system() == "Linux":
+    options["bdist_wheel"]["plat_name"] = plat_name()
+
+
+setup(options=options)

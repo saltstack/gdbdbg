@@ -20,7 +20,7 @@ on:
           --outdir dist/
     outputs:
       version:
-        value: "${{ jobs.build.outputs.version }}"
+        value: "${{ jobs.build-linux.outputs.version }}"
 
 jobs:
   build-source:
@@ -43,8 +43,8 @@ jobs:
           path: dist/*
           retention-days: 5
 
-  build:
-    name: Build Python Wheel
+  build-linux:
+    name: Build Python Wheel (Linux)
     strategy:
       matrix:
         host:
@@ -113,3 +113,31 @@ jobs:
         >>
         $GITHUB_OUTPUT
       id: version
+
+  build-windows:
+    name: Build Python Wheel (Windows)
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Python Dependencies
+      run: |
+        pip install build wheel setuptools pkginfo
+
+    - name: Build Wheel
+      run: |
+        ${{ inputs.cmd }}
+      shell: bash
+
+    - name: Python Build Artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Python Wheel Windows
+        path: dist/*.whl
+        retention-days: 5
