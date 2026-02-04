@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+# Copyright 2026 Broadcom, Inc.
 # Copyright 2021-2026 VMware, Inc.
 # SPDX-License-Identifier: Apache-2.0
 #
