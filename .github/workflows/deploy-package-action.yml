@@ -26,12 +26,6 @@ jobs:
           name: Python Wheel aarch64
           path: dist
 
-      - name: Download Windows Python Package Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: Python Wheel Windows
-          path: dist
-
       - name: List dist directory
         run: ls -la dist/
 

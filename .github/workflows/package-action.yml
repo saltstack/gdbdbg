@@ -59,7 +59,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
 
     container:
-      image: debian:11
+      image: python:3.10-bullseye
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -71,8 +71,7 @@ jobs:
 
     - name: Install OS Dependencies
       run: >-
-        apt-get install -y python3
-        python3-pip python3-venv patchelf build-essential m4 texinfo
+        apt-get install -y patchelf build-essential m4 texinfo
 
     - name: Create virtualenv
       run: >-
@@ -114,31 +113,3 @@ jobs:
         >>
         $GITHUB_OUTPUT
       id: version
-
-  build-windows:
-    name: Build Python Wheel (Windows)
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@master
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install Python Dependencies
-      run: |
-        pip install build wheel setuptools pkginfo
-
-    - name: Build Wheel
-      run: |
-        ${{ inputs.cmd }}
-      shell: bash
-
-    - name: Python Build Artifact
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: Python Wheel Windows
-        path: dist/*.whl
-        retention-days: 5
