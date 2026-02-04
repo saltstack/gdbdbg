@@ -30,6 +30,12 @@ jobs:
           name: Python Wheel aarch64
           path: dist
 
+      - name: Download Windows Python Package Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Python Wheel Windows
+          path: dist
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -39,7 +45,7 @@ jobs:
           tag_name: "v${{ inputs.version }}"
           release_name: "Release v${{ inputs.version }}"
           body: |
-            Release ${{ needs.build-python-package.outputs.version }}
+            Release ${{ inputs.version }}
           draft: false
           prerelease: false
 
@@ -74,4 +80,15 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: dist/gdbdbg-${{ inputs.version }}-py3-none-manylinux_2_17_aarch64.whl
           asset_name: gdbdbg-${{ inputs.version }}-py3-none-manylinux_2_17_aarch64.whl
+          asset_content_type: application/zip
+
+      - name: Upload Windows Wheel
+        id: upload-release-asset-windows
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/gdbdbg-${{ inputs.version }}-py3-none-win_amd64.whl
+          asset_name: gdbdbg-${{ inputs.version }}-py3-none-win_amd64.whl
           asset_content_type: application/zip

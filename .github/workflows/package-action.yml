@@ -50,12 +50,13 @@ jobs:
         host:
           - x86_64
           - aarch64
+        include:
+          - host: x86_64
+            runner: ubuntu-latest
+          - host: aarch64
+            runner: ubuntu-24.04-arm
 
-    runs-on:
-      - self-hosted
-      - linux
-      - src-build
-      - ${{ matrix.host }}
+    runs-on: ${{ matrix.runner }}
 
     container:
       image: debian:11
