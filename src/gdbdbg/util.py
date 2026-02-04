@@ -1,4 +1,5 @@
-# Copyright 2023-2024 VMware, Inc.
+# Copyright 2026 Broadcom, Inc.
+# Copyright 2023-2026 VMware, Inc.
 # SPDX-License-Identifier: Apache-2.0
 """
 Utility methods.
