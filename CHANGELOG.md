@@ -1,3 +1,9 @@
+0.2.6
+=====
+
+* fix script finding in util modules
+
+
 0.2.5
 =====
 
@@ -9,6 +15,7 @@ This is the first public release.
 * Improve inject script reliability by using PyRun_SimpleFile instead of
   PyRun_SimpleString.
 * Add script to build wheel in docker container.
+
 
 0.1.0
 =====

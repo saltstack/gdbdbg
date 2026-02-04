@@ -8,7 +8,7 @@ import pathlib
 
 def find_dist_info():
     """Find relenv_gdb's dist-info directory."""
-    for name in pathlib.Path(__file__).parent.parent.rglob("relenv_gdb*dist-info"):
+    for name in pathlib.Path(__file__).parent.parent.rglob("gdbdbg*dist-info"):
         return name
 
 
@@ -17,7 +17,7 @@ def find_relenv_gdb():
     dist_info = find_dist_info()
     text = pathlib.Path(dist_info, "RECORD").read_text()
     for line in text.split("\n"):
-        if "bin/relenv-gdb" in line:
+        if "bin/gdbdbg-gdb" in line:
             location, digest, size = line.rsplit(",", 2)
             script = (pathlib.Path(dist_info).parent / location).resolve()
             if script.exists():
